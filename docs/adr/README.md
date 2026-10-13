@@ -20,3 +20,4 @@ NNNN` e escreve-se um novo. Não se reescreve o passado.
 | [0008](0008-perfis-de-memoria.md) | Perfis de arranque em vez de tudo sempre ligado | Aceite |
 | [0009](0009-casa-inteligente-home-assistant.md) | Home Assistant como cérebro da casa | Aceite |
 | [0010](0010-monitorizacao-fora-do-openshift.md) | Monitorização da máquina num LXC sempre ligado, fora do OpenShift | Aceite |
+| [0011](0011-devbox-como-maquina-do-compose.md) | A devbox corre o compose de desenvolvimento; os LXC de Kafka e PostgreSQL saem | Aceite |

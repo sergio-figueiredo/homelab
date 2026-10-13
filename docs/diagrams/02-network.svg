@@ -138,11 +138,11 @@
   <text class="l" x="614" y="534">ocp-sno · .20</text>
   <text class="xs" x="614" y="552">OpenShift single-node</text>
   <rect class="chip" x="780" y="514" width="150" height="48"/>
-  <text class="l" x="794" y="534">kafka · .21</text>
-  <text class="xs" x="794" y="552">LXC · KRaft</text>
+  <text class="l" x="794" y="534">registry · .23</text>
+  <text class="xs" x="794" y="552">LXC · imagens OCI</text>
   <rect class="chip" x="946" y="514" width="186" height="48"/>
-  <text class="l" x="960" y="534">pg .22 · registry .23</text>
-  <text class="xs" x="960" y="552">PostgreSQL · imagens OCI</text>
+  <text class="l" x="960" y="534">monitoring · .24</text>
+  <text class="xs" x="960" y="552">LXC · Prometheus e Grafana</text>
 
   <rect class="card" x="362" y="590" width="776" height="84"/>
   <rect x="362" y="590" width="8" height="84" rx="4" fill="var(--iot)"/>

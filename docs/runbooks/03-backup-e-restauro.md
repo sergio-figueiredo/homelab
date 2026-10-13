@@ -18,8 +18,8 @@ O backup não é boa prática neste lab — é o que substitui a redundância qu
 | **Chave `age` dos segredos** | `~/.config/sops/age/keys.txt` | **Cópia offline manual** | **Máxima — sem ela, nada se decifra** |
 | Estado do OpenTofu | Backend remoto S3-compat | Versionamento do bucket | Alta |
 | Base de dados do Home Assistant | VM `haos` | Backup do PBS + backup nativo do HA | Alta — histórico não se recria |
-| Volumes do PostgreSQL | LXC `postgres` e PVC no cluster | PBS + `pg_dump` lógico | Média |
-| Tópicos de Kafka | LXC `kafka` | Não se salva | Nenhuma — reconstrutíveis |
+| Volumes do PostgreSQL | PVC no cluster | `pg_dump` lógico | Média |
+| Serviços do compose de desenvolvimento | `devbox` | Não se salva | Nenhuma — voláteis por desenho |
 | Biblioteca Steam | VM `bazzite` | Não se salva | Nenhuma — 250 GB que se voltam a descarregar |
 | `kubeconfig`, credenciais do cluster | `~/.kube/` | Reinstalar o cluster | Baixa — o cluster é descartável |
 

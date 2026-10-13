@@ -1,8 +1,8 @@
 # ─── Cartão de leitura ────────────────────────────────────────────────────────
-#  O QUE FAZ      Cria um contentor LXC no Proxmox. Usado pelos três serviços de plataforma.
-#  PORQUE EXISTE  Um contentor partilha o kernel do host: custa quase nada em RAM. Três VMs
-#                 para Kafka, PostgreSQL e registry gastariam ~6 GB só em kernels.
-#  SE TIRARES     Kafka, PostgreSQL e registry não têm onde nascer.
+#  O QUE FAZ      Cria um contentor LXC no Proxmox. Usado pelos serviços leves do lab.
+#  PORQUE EXISTE  Um contentor partilha o kernel do host: custa quase nada em RAM. Uma VM
+#                 por serviço leve gastaria ~1 GB só em kernel e sistema.
+#  SE TIRARES     O registry e os restantes serviços leves não têm onde nascer.
 #  ONDE APRENDER  docs/percurso.md — etapa 0 para VM contra contentor, etapa 2 para a sintaxe
 # ──────────────────────────────────────────────────────────────────────────────
 #
