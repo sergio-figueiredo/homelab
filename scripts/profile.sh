@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ─── Cartão de leitura ────────────────────────────────────────────────────────
 #  O QUE FAZ      Liga e desliga conjuntos de guests conforme o perfil de memória escolhido.
-#  PORQUE EXISTE  A soma dos guests pede 80 GB e a máquina tem 64. Este script é o mecanismo
+#  PORQUE EXISTE  A soma dos guests pede mais do que os 64 GB da máquina. Este script é o mecanismo
 #                 que impede o lab de entrar em falta de memória.
 #  SE TIRARES     Ligas tudo, a máquina fica sem RAM, e o oom-killer escolhe por ti — e
 #                 escolhe sempre mal.
@@ -28,10 +28,8 @@ GUESTS=(
   "100:qm:opnsense-lab:2"
   "110:qm:haos:4"
   "120:qm:ocp-sno:24"
-  "130:qm:devbox:16"
+  "130:qm:devbox:24"
   "140:qm:bazzite:16"
-  "200:pct:kafka:4"
-  "201:pct:postgres:4"
   "202:pct:registry:2"
 )
 
@@ -39,9 +37,9 @@ profile_members() {
   case "$1" in
     idle)      echo "100 110" ;;
     gaming)    echo "100 110 140" ;;
-    dev)       echo "100 110 130 200 201 202" ;;
-    platform)  echo "100 110 120 200 201 202" ;;
-    full-lab)  echo "100 110 120 130 200 201 202" ;;
+    dev)       echo "100 110 130 202" ;;
+    platform)  echo "100 110 120 202" ;;
+    full-lab)  echo "100 110 120 130 202" ;;
     *) echo "perfil desconhecido: $1" >&2
        echo "disponiveis: idle gaming dev platform full-lab" >&2
        exit 2 ;;

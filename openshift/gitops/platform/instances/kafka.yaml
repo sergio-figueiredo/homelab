@@ -3,7 +3,7 @@
 #  O QUE FAZ      Declara o cluster Kafka e os tópicos, através do operador Strimzi.
 #  PORQUE EXISTE  Mostra o modelo de operador na prática: descreves um Kafka em YAML e o
 #                 operador cria os pods, os discos e a configuração por ti.
-#  SE TIRARES     Não há Kafka no cluster. Os LXC de plataforma continuam a servir.
+#  SE TIRARES     Não há Kafka no cluster. O compose da devbox continua a servir os testes locais.
 #  ONDE APRENDER  docs/percurso.md — etapa 8
 # ──────────────────────────────────────────────────────────────────────────────
 #

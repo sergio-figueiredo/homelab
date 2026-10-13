@@ -46,9 +46,7 @@ backup_retention:
 backup_jobs:
   - { vmid: 110, schedule: "03:00", comment: "haos — a casa depende deste" }
   - { vmid: 100, schedule: "03:15", comment: "opnsense — regras de firewall" }
-  - { vmid: 200, schedule: "03:30", comment: "kafka" }
-  - { vmid: 201, schedule: "03:40", comment: "postgres" }
-  - { vmid: 202, schedule: "03:50", comment: "registry" }
+  - { vmid: 202, schedule: "03:30", comment: "registry" }
   - { vmid: 130, schedule: "sun 04:00", comment: "devbox — semanal" }
 # ocp-sno e bazzite nao sao salvaguardados de proposito: reinstalaveis.
 

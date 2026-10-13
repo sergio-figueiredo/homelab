@@ -59,7 +59,7 @@ diferença muda o desempenho e o acesso ao hardware.
 
 **VM contra contentor.** Uma VM traz o seu próprio kernel; um contentor partilha o kernel do host.
 Consequência prática, e é a que decide coisas neste lab: uma VM custa ~1 GB de RAM só em kernel e
-sistema de ficheiros, um contentor LXC custa quase nada. Daí o Kafka e o PostgreSQL serem LXC e o
+sistema de ficheiros, um contentor LXC custa quase nada. Daí o registry e a monitorização serem LXC e o
 OpenShift ser VM.
 
 **ZFS.** Não é só um sistema de ficheiros. Precisas de cinco palavras:
@@ -97,7 +97,7 @@ Nada de prático. Esta etapa é de leitura, e é a única que é.
 
 Consegues explicar, sem consultar:
 
-1. Porque é que o Kafka deste lab corre em LXC e o OpenShift em VM?
+1. Porque é que o registry deste lab corre em LXC e o OpenShift em VM?
 2. O que é que a ARC do ZFS tem a ver com o OpenShift não arrancar?
 3. Se tens uma NIC e queres seis redes isoladas, o que é preciso e onde?
 4. O que é um snapshot ZFS e porque é que é barato?

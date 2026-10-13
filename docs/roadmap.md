@@ -32,14 +32,17 @@ Projecto pessoal, sem prazos. A ordem é por dependência, não por data.
 - [ ] `haos` a correr, com o dongle Zigbee/Thread passado por USB
 - [ ] LXC `monitoring` com Prometheus e Grafana, no perfil `idle` — [ADR 0010](adr/0010-monitorizacao-fora-do-openshift.md)
 - [ ] `node_exporter` e `pve-exporter` no host, com token só de leitura
-- [ ] LXC de plataforma: Kafka, PostgreSQL, registry
+- [ ] LXC `registry`
 - [ ] Proxmox Backup Server e a primeira **restauração testada** — o backup só conta depois disso
+- [ ] `pbs` declarado em OpenTofu e com a RAM medida, para entrar no perfil `idle` do `profile.sh`
+- [ ] LXC `runner` efémero para os deploys do projecto pessoal — [ADR 0012](adr/0012-runner-de-deploy-do-hobby.md)
 
 ## Fase 3 — Bancada
 
 - [ ] Imagem `bootc` da `devbox` construída no GitHub Actions
 - [ ] JetBrains Gateway a ligar de forma estável
 - [ ] Toolchain completo: JDK 21, GraalVM, Quarkus CLI, Maven, Podman, `oc`, `tofu`
+- [ ] Compose de desenvolvimento do trabalho a correr na `devbox`, com as imagens `amd64` originais — [ADR 0011](adr/0011-devbox-como-maquina-do-compose.md)
 - [ ] Um `native-image` compilado de ponta a ponta, com o tempo registado
 
 ## Fase 4 — Consola

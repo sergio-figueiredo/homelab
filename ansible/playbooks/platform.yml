@@ -9,22 +9,6 @@
       tags: [common]
 
   tasks:
-    - name: Kafka em modo KRaft
-      ansible.builtin.debug:
-        msg: >-
-          Por implementar: instalar Kafka, gerar o cluster-id KRaft e
-          configurar os listeners. Ver docs/roadmap.md, Fase 2.
-      when: inventory_hostname == 'kafka'
-      tags: [kafka]
-
-    - name: PostgreSQL 16
-      ansible.builtin.debug:
-        msg: >-
-          Por implementar: instalar o PostgreSQL, afinar shared_buffers para
-          4 GB de RAM e criar as bases de desenvolvimento.
-      when: inventory_hostname == 'postgres'
-      tags: [postgres]
-
     - name: Registry OCI
       ansible.builtin.debug:
         msg: >-
