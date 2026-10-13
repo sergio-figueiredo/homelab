@@ -2,7 +2,7 @@
 
 # homelab
 
-**One node. Six machines. All of it in Git.**
+**One node. Nine guests. All of it in Git.**
 
 A home lab built on Proxmox VE, with the entire infrastructure declared as code. The only thing
 installed by hand is the hypervisor. From there on, every VM, every container, every firewall rule
@@ -37,6 +37,7 @@ three in the morning — without anyone real paying for it.
 | [Getting started](#getting-started) | How to stand this up from nothing |
 | [Conventions](#conventions) | Secrets, decisions, names |
 | [Status](#status) | What works and what doesn't yet |
+| [Interactive diagrams](docs/diagrams/interativos/README.md) | Topology, infrastructure and network, to explore in a browser |
 | [Study path](docs/percurso.md) | The order to learn this in, and what to know before advancing (Portuguese) |
 
 ---
@@ -128,7 +129,11 @@ Detail, including the addressing plan and the inter-VLAN rules: **[docs/network.
 | `pbs` | LXC: Proxmox Backup Server | — | 2 GB | — | 10 | always |
 | `runner` | LXC: ephemeral deploy runner | 2 | 2 GB | — | 20 | on demand |
 
-Two decisions worth explaining:
+The first six are declared in OpenTofu. `monitoring`, `pbs` and `runner` are decided
+([ADR 0010](docs/adr/0010-monitorizacao-fora-do-openshift.md),
+[ADR 0012](docs/adr/0012-runner-de-deploy-do-hobby.md)) and go into code next.
+
+Three decisions worth explaining:
 
 **The GPU belongs to one VM at a time.** There is one PCIe slot and one card. `bazzite` gets it
 whole through `vfio-pci`, along with the rear USB controller and Bluetooth. The host uses the
@@ -138,6 +143,12 @@ repository says so instead of promising otherwise.
 **The per-CCD pinning is not decorative.** The 9950X3D stacks 64 MB of cache on CCD 0 only. Pinning
 the gaming VM to those cores and pushing OpenShift and the builds onto CCD 1 stops the scheduler
 from throwing threads between dies — the classic problem with dual-CCD X3D parts.
+
+**`devbox` is the whole bench.** The day-job development compose — Kafka, Oracle, Cassandra,
+SonarQube, WireMock and the rest, with throwaway data — runs there, using the original `amd64`
+images that don't exist on the ARM Mac. That's why there are no dedicated LXCs for Kafka and
+PostgreSQL: they would duplicate what the compose already brings. The compose lives in the project's
+repository, not this one ([ADR 0011](docs/adr/0011-devbox-como-maquina-do-compose.md)).
 
 ---
 
@@ -177,10 +188,10 @@ laptop costs a `git clone` and restoring two keys.
 There are two cycles, and they meet at exactly one point — an image digest:
 
 - **Infrastructure.** Edit on the Mac → PR → GitHub Actions validates (`tofu validate`, `tflint`,
-  `ansible-lint`, `gitleaks`) → merge → `make apply` from the Mac against the Proxmox API → Ansible
+  `ansible-lint`, `gitleaks`, and builds whichever `bootc` images changed) → merge → `make apply` from the Mac against the Proxmox API → Ansible
   finishes the configuration over SSH.
 - **Application.** JetBrains Gateway opens the IDE against `devbox`, where the code actually
-  compiles → push → Tekton inside the cluster (or Actions when the cluster is off) → signed image in
+  compiles and the development compose runs → push → Tekton inside the cluster (or Actions when the cluster is off) → signed image in
   the registry → digest bump in the GitOps repository → Argo CD syncs.
 
 Nothing reaches the cluster through `oc apply` from a laptop. If it isn't in Git, it doesn't exist —
@@ -235,7 +246,7 @@ homelab/
 │   ├── adr/               # architecture decisions, with the context
 │   ├── runbooks/          # operational procedures
 │   └── diagrams/          # the SVGs on this page and the interactive diagrams
-└── .github/workflows/     # PR validation
+└── .github/workflows/     # PR validation and bootc image builds
 ```
 
 ---
@@ -298,11 +309,13 @@ decided architecture and the code skeleton that implements it.
 
 | Area | Status |
 |---|---|
-| Architecture, diagrams, ADRs | designed |
+| Architecture, diagrams, ADRs | designed; interactive diagrams in [`docs/diagrams/interativos/`](docs/diagrams/interativos/README.md) |
 | Proxmox bootstrap | written, unverified on metal |
 | OpenTofu — modules and environment | written, validated against the provider schema, unverified on metal |
 | Ansible — inventory and roles | skeleton |
-| bootc images — Bazzite and devbox | skeleton |
+| bootc images — Bazzite and devbox | skeleton, built in CI on every PR that touches them |
+| `monitoring`, `pbs`, `runner` | decided in ADRs, not yet declared in OpenTofu |
+| Smart home | decided ([ADR 0009](docs/adr/0009-casa-inteligente-home-assistant.md)), not yet built |
 | OpenShift SNO installation | documented, not yet run |
 | Argo CD app-of-apps | skeleton |
 | GPU passthrough | unverified on metal |
