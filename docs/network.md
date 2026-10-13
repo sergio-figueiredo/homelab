@@ -37,6 +37,7 @@ Supernet do laboratório: `10.10.0.0/16`. Uma `/24` por VLAN, com espaço de sob
 | `ocp-sno` — API e nó | `10.10.20.20` | 20 |
 | `registry` | `10.10.20.23` | 20 |
 | `monitoring` — Prometheus e Grafana | `10.10.20.24` | 20 |
+| `runner` — runner de deploy efémero | `10.10.20.25` | 20 |
 | `haos` | `10.10.30.30` | 30 |
 | Painel de parede (reserva DHCP) | `10.10.30.31` | 30 |
 | `bazzite` | `10.10.40.40` | 40 |

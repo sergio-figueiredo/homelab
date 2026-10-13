@@ -1,6 +1,6 @@
 # Capacidade
 
-64 GB de RAM, dois slots ocupados, e a soma de tudo o que o lab quer correr dá 79 GB. Este documento
+64 GB de RAM, dois slots ocupados, e a soma de tudo o que o lab quer correr dá 83 GB. Este documento
 existe porque essa conta não fecha — e a resposta não é comprar já, é desenhar em torno do limite.
 
 Ver o desenho: **[diagrams/04-capacity.svg](diagrams/04-capacity.svg)**.
@@ -13,11 +13,13 @@ Ver o desenho: **[diagrams/04-capacity.svg](diagrams/04-capacity.svg)**.
 | `opnsense-lab` | 2 GB | fixo, sempre ligado |
 | `haos` | 4 GB | fixo, sempre ligado |
 | `monitoring` (LXC) | 1 GB | Prometheus e Grafana, sempre ligado — [ADR 0010](adr/0010-monitorizacao-fora-do-openshift.md) |
+| `pbs` (LXC) | 2 GB | Proxmox Backup Server, sempre ligado — os vzdump correm de madrugada. Valor de partida, a medir |
 | `ocp-sno` | 24 GB | sem balloon; o OpenShift lida mal com memória a desaparecer |
 | `registry` (LXC) | 2 GB | registry OCI |
 | `devbox` | 24 GB | balloon 16–24; inclui o compose de desenvolvimento (~13,5 GB de limites) — [ADR 0011](adr/0011-devbox-como-maquina-do-compose.md) |
 | `bazzite` | 16 GB | hugepages, sem balloon |
-| **Total se tudo ligasse** | **79 GB** | **15 GB acima do físico** |
+| `runner` (LXC) | 2 GB | sob procura, fora dos perfis — [ADR 0012](adr/0012-runner-de-deploy-do-hobby.md) |
+| **Total se tudo ligasse** | **83 GB** | **19 GB acima do físico** |
 
 ## Perfis
 
@@ -26,11 +28,11 @@ Cada perfil é um alvo do `Makefile` que arranca e pára conjuntos de guests. N�
 
 | Perfil | RAM | Contém | Para quê |
 |---|---:|---|---|
-| `idle` | 13 GB | host, `opnsense-lab`, `haos`, `monitoring` | O estado por omissão. A casa funciona, a máquina é observada, o lab dorme |
-| `gaming` | 29 GB | `idle` + `bazzite` | Consola da sala |
-| `dev` | 39 GB | `idle` + `devbox` + `registry` | O perfil de todos os dias: código e o compose de desenvolvimento |
-| `platform` | 39 GB | `idle` + `ocp-sno` + `registry` | Exercícios de OpenShift e GitOps |
-| `full-lab` | 63 GB | `idle` + `ocp-sno` + `registry` + `devbox` | Ciclo completo, só com os ajustes abaixo |
+| `idle` | 15 GB | host, `opnsense-lab`, `haos`, `monitoring`, `pbs` | O estado por omissão. A casa funciona, a máquina é observada e salvaguardada, o lab dorme |
+| `gaming` | 31 GB | `idle` + `bazzite` | Consola da sala |
+| `dev` | 41 GB | `idle` + `devbox` + `registry` | O perfil de todos os dias: código e o compose de desenvolvimento |
+| `platform` | 41 GB | `idle` + `ocp-sno` + `registry` | Exercícios de OpenShift e GitOps |
+| `full-lab` | 65 GB | `idle` + `ocp-sno` + `registry` + `devbox` | Ciclo completo, só com os ajustes abaixo |
 
 ```bash
 make profile-dev        # pára o que sobra, arranca o que falta
@@ -39,12 +41,15 @@ make profile-status     # mostra o que está ligado e quanta RAM está compromet
 
 Os perfis são idempotentes: correr `make profile-dev` duas vezes não faz nada na segunda.
 
+Dois guests contam aqui mas ainda não estão no `scripts/profile.sh`: o `pbs`, que não está declarado
+em OpenTofu, e o `runner`, que se liga à parte quando há deploy e soma 2 GB a qualquer perfil.
+
 ## O caso `full-lab`
 
-Somado à letra, o `full-lab` dá 63 GB — 1 GB abaixo do tecto físico, ou seja, sem folga nenhuma.
-Encostar ao tecto é pedir que o `oom-killer` escolha por nós, e ele escolhe sempre mal.
+Somado à letra, o `full-lab` dá 65 GB — 1 GB acima do tecto físico. Encostar ao tecto é pedir que
+o `oom-killer` escolha por nós, e ele escolhe sempre mal.
 
-Três ajustes, por esta ordem, põem o perfil em ~57 GB com 7 GB de margem:
+Três ajustes, por esta ordem, põem o perfil em ~59 GB com 5 GB de margem:
 
 1. **Baixar a ARC do ZFS de 8 para 4 GB.** É o ganho maior e o mais barato. Custo: menos cache de
    leitura, sensível no arranque de VMs, irrelevante depois.
@@ -62,9 +67,9 @@ que reporta saudável enquanto entrega latências absurdas — pior do que falha
 
 ## O caso que deixou de ser impossível
 
-`gaming` + `platform` = 55 GB. Até o compose de desenvolvimento passar para a `devbox`
-([ADR 0011](adr/0011-devbox-como-maquina-do-compose.md)), pedia 81 GB e não existia. Agora cabe com
-9 GB de margem: a `bazzite` fica com a GPU e o CCD 0, o OpenShift com o CCD 1.
+`gaming` + `platform` = 57 GB. Até o compose de desenvolvimento passar para a `devbox`
+([ADR 0011](adr/0011-devbox-como-maquina-do-compose.md)), pedia mais de 80 GB e não existia. Agora cabe
+com 7 GB de margem: a `bazzite` fica com a GPU e o CCD 0, o OpenShift com o CCD 1.
 
 Não vira perfil antes de ser medido no metal: o CPU dos dois em carga e a temperatura da caixa SFF
 são as incógnitas, não a memória.
@@ -79,7 +84,7 @@ O CPU não é o recurso escasso, mas o *pinning* também não é opcional — ve
 | `bazzite` | 8 | 0 | `cpuset` fixo nos cores com V-Cache, sem partilha |
 | `ocp-sno` | 12 | 1 | `cpuset` no CCD 1, sobrecomprometido com os restantes |
 | `devbox` | 8 | 1 | idem; picos de `native-image` toleram contenção |
-| `registry`, `haos`, `opnsense`, `monitoring` | 8 no total | 1 | sem pinning, cargas leves |
+| `registry`, `haos`, `opnsense`, `monitoring`, `pbs`, `runner` | 12 no total | 1 | sem pinning, cargas leves |
 
 Sobrecomprometer vCPU é normal e desejável. Sobrecomprometer RAM não é — daí um documento inteiro
 sobre memória e três parágrafos sobre CPU.
