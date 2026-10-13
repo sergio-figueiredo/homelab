@@ -20,6 +20,7 @@ Projecto pessoal, sem prazos. A ordem é por dependência, não por data.
 - [ ] Instalar o `opnsense-lab` e migrar DHCP e DNS do lab
 - [ ] Escrever as regras inter-VLAN em `ansible/` e validar a matriz de fluxo
 - [ ] Tailscale como subnet router para `10.10.0.0/16`
+- [ ] Repetidor mDNS entre a LAN de casa e a VLAN 30, e as excepções da casa e da monitorização na matriz
 
 > Enquanto esta fase não estiver feita o lab corre em modo `flat`. Funciona; simplesmente não
 > demonstra nada sobre segmentação.
@@ -28,7 +29,9 @@ Projecto pessoal, sem prazos. A ordem é por dependência, não por data.
 
 - [ ] Template Fedora cloud com Packer
 - [ ] Módulos `proxmox-vm` e `proxmox-lxc` validados no metal
-- [ ] `haos` a correr, com o dongle Zigbee passado por USB
+- [ ] `haos` a correr, com o dongle Zigbee/Thread passado por USB
+- [ ] LXC `monitoring` com Prometheus e Grafana, no perfil `idle` — [ADR 0010](adr/0010-monitorizacao-fora-do-openshift.md)
+- [ ] `node_exporter` e `pve-exporter` no host, com token só de leitura
 - [ ] LXC de plataforma: Kafka, PostgreSQL, registry
 - [ ] Proxmox Backup Server e a primeira **restauração testada** — o backup só conta depois disso
 
@@ -46,6 +49,19 @@ Projecto pessoal, sem prazos. A ordem é por dependência, não por data.
 - [ ] Controlador USB e Bluetooth passados
 - [ ] Pinning no CCD 0 e hugepages, com medição antes e depois
 - [ ] Sunshine para streaming dentro de casa
+- [ ] `node_exporter` com o coletor `amdgpu` no Containerfile da `bazzite`
+
+## Casa
+
+Independente das fases 3 a 7; só precisa do `haos` e do `monitoring` da fase 2.
+Decisão em [ADR 0009](adr/0009-casa-inteligente-home-assistant.md).
+
+- [ ] Ponte de integração do HA com o hub Matter/Thread da casa
+- [ ] Painel de parede em modo kiosk, utilizador restrito no HA
+- [ ] Dashboard com abas Câmaras, Máquina e Casa; vista separada para telemóvel
+- [ ] Câmaras e campainha com stream local (RTSP/ONVIF), Advanced Camera Card com `go2rtc`
+- [ ] Popup da campainha no painel (`browser_mod`) e notificação *push* com imagem no telemóvel
+- [ ] Grafana embutido no HA, com `allow_embedding` e utilizador *viewer*
 
 ## Fase 5 — Plataforma
 
@@ -55,6 +71,7 @@ Projecto pessoal, sem prazos. A ordem é por dependência, não por data.
 - [ ] Operadores: Strimzi, CloudNativePG, Kong Gateway, cert-manager, External Secrets
 - [ ] LVM Storage Operator com uma StorageClass funcional
 - [ ] Observabilidade: user-workload monitoring, Grafana Operator, OpenTelemetry, Tempo
+- [ ] Federação (ou *remote write*) do Prometheus do cluster para o `monitoring`
 
 ## Fase 6 — A aplicação de demonstração
 
@@ -87,6 +104,7 @@ A parte que justifica o lab existir. Cada um é para ser feito de propósito e e
 | Inferência local de LLM na GPU | Conflito directo com a `bazzite`. Sem solução com um slot |
 | Domínio real e ACME DNS-01 | Só quando houver algo que justifique certificados públicos |
 | UPS | Provável antes do segundo disco: corte de energia é o modo de falha mais realista |
+| Gravação de câmaras com Frigate | Precisa de casa e de RAM: não cabe no `idle` sem rever [capacity.md](capacity.md). Até lá, só vídeo ao vivo |
 
 ## Fora de âmbito
 
@@ -99,3 +117,5 @@ Ficam de fora por escolha, não por esquecimento:
   plataforma e operação.
 - **Kubernetes vanilla a par do OpenShift.** O objectivo é aprofundar o OpenShift, não comparar
   distribuições.
+- **Dispositivos que só funcionam pela cloud do fabricante.** A casa não depende de clouds de
+  terceiros — ver [ADR 0009](adr/0009-casa-inteligente-home-assistant.md).

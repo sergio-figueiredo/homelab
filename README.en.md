@@ -97,8 +97,8 @@ the lab burns down, the family stays online.
 |---:|---|---|---|
 | — | untagged | `192.168.1.0/24` | House LAN; OPNsense WAN leg |
 | 10 | `MGMT` | `10.10.10.0/24` | Proxmox, switch management, Proxmox Backup Server |
-| 20 | `PLATFORM` | `10.10.20.0/24` | OpenShift, Kafka, PostgreSQL, registry |
-| 30 | `IOT` | `10.10.30.0/24` | Home Assistant and every piece of third-party firmware |
+| 20 | `PLATFORM` | `10.10.20.0/24` | OpenShift, Kafka, PostgreSQL, registry, monitoring |
+| 30 | `IOT` | `10.10.30.0/24` | Home Assistant, the wall panel and every piece of third-party firmware |
 | 40 | `GAMING` | `10.10.40.0/24` | Bazzite |
 | 50 | `DEV` | `10.10.50.0/24` | Development bench |
 
@@ -123,6 +123,7 @@ Detail, including the addressing plan and the inter-VLAN rules: **[docs/network.
 | `bazzite` | Bazzite (Fedora Atomic) | 8 · CCD 0 pinned | 16 GB | 250 GB | 40 | on demand |
 | `platform` | 3 × LXC: Kafka, PostgreSQL, registry | 6 shared | 12 GB | 100 GB | 20 | on demand |
 | `haos` | Home Assistant OS | 2 | 4 GB | 32 GB | 30 | always |
+| `monitoring` | LXC: Prometheus and Grafana | 2 | 1 GB | 30 GB | 20 | always |
 | `opnsense-lab` | OPNsense | 2 | 2 GB | 20 GB | trunk | always |
 
 Two decisions worth explaining:
@@ -148,14 +149,14 @@ boot profiles, and each profile is a `Makefile` target.
 </p>
 
 ```bash
-make profile-idle       # 12 GB — OPNsense and Home Assistant only
-make profile-gaming     # 28 GB — the living room console
-make profile-dev        # 40 GB — devbox + Kafka + PostgreSQL
-make profile-platform   # 48 GB — OpenShift + data services
-make profile-full-lab   # 64 GB — everything but gaming, and only with the tuning in docs/capacity.md
+make profile-idle       # 13 GB — OPNsense, Home Assistant and monitoring only
+make profile-gaming     # 29 GB — the living room console
+make profile-dev        # 41 GB — devbox + Kafka + PostgreSQL
+make profile-platform   # 49 GB — OpenShift + data services
+make profile-full-lab   # 65 GB — everything but gaming, and only with the tuning in docs/capacity.md
 ```
 
-`gaming` and `platform` never coexist: together they ask for 80 GB. It's the most concrete
+`gaming` and `platform` never coexist: together they ask for 81 GB. It's the most concrete
 limitation in the lab and it's drawn rather than hidden. The way out — 2 × 48 GB — is in
 **[docs/capacity.md](docs/capacity.md)**, along with the memory-speed cost it implies.
 
@@ -203,7 +204,7 @@ service, transactional outbox, events over Kafka, reads separated from writes.
 | Data | CloudNativePG | One database per service, with a replica where it makes sense |
 | Delivery | OpenShift GitOps (Argo CD) | App-of-apps, automated sync, self-heal, prune |
 | Build | OpenShift Pipelines (Tekton) | Native build inside the cluster, Maven cache on a PVC |
-| Observability | Prometheus, Grafana, OpenTelemetry, Tempo | Continuous trace from gateway to consumer, across the topic |
+| Observability | Prometheus, Grafana, OpenTelemetry, Tempo | Continuous trace from gateway to consumer, across the topic. The cluster's Prometheus federates into the `monitoring` LXC, which watches the machine even with the cluster off — [ADR 0010](docs/adr/0010-monitorizacao-fora-do-openshift.md) |
 | Secrets | SOPS + age, External Secrets Operator | Public repository: nothing in the clear, ever |
 
 ---
