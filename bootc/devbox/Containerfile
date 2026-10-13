@@ -2,7 +2,7 @@
 #  O QUE FAZ      Descreve o sistema operativo da devbox como se fosse uma imagem de contentor.
 #  PORQUE EXISTE  A devbox corre Fedora Silverblue, que é imutável: não fazes dnf install no
 #                 sistema a correr. Mudas este ficheiro, reconstróis, e reinicias.
-#  SE TIRARES     A devbox fica um Fedora sem toolchain — sem JDK, sem GraalVM, sem Podman.
+#  SE TIRARES     A devbox fica um Fedora sem toolchain — sem JDK, sem GraalVM, sem motor de contentores.
 #  ONDE APRENDER  docs/percurso.md — etapa 9, e a nota honesta sobre o Silverblue
 # ──────────────────────────────────────────────────────────────────────────────
 #
@@ -31,6 +31,7 @@ LABEL org.opencontainers.image.licenses="MIT"
 RUN dnf -y install \
       git git-lfs gh \
       podman podman-compose buildah skopeo \
+      moby-engine docker-compose \
       distrobox toolbox \
       make gcc gcc-c++ \
       zsh tmux ripgrep fd-find bat jq yq \
@@ -44,6 +45,14 @@ RUN dnf -y install \
 # JetBrains Gateway precisa de um sshd estavel — e o unico servico exposto.
 # ---------------------------------------------------------------------------
 RUN systemctl enable sshd qemu-guest-agent
+
+# ---------------------------------------------------------------------------
+# Docker ao lado do Podman: o compose de desenvolvimento do trabalho assume o
+# comportamento do Docker (IPs fixos, mem_limit, `docker compose`). O compose
+# vive no repositorio do projecto, nao aqui.
+# Ver docs/adr/0011-devbox-como-maquina-do-compose.md
+# ---------------------------------------------------------------------------
+RUN systemctl enable docker.socket
 
 COPY etc/ /etc/
 

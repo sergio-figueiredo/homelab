@@ -109,7 +109,7 @@
   <text class="s" x="80" y="682">é o que garante que não existe evento sem escrita, nem escrita sem evento.</text>
 
   <text class="s" x="62" y="730">Um broker, réplica 1: chega para aprender operação e falha de consumidor. Não substitui um cluster de três nós — e o repo assume-o.</text>
-  <text class="s" x="62" y="752">Fora do cluster, os LXC <tspan class="mono">kafka</tspan> e <tspan class="mono">postgres</tspan> servem os testes locais do devbox quando o OpenShift está desligado.</text>
+  <text class="s" x="62" y="752">Fora do cluster, o compose da <tspan class="mono">devbox</tspan> serve os testes locais quando o OpenShift está desligado (ADR 0011).</text>
   <text class="s" x="62" y="774">Namespaces: <tspan class="mono">orders</tspan> · <tspan class="mono">inventory</tspan> · <tspan class="mono">query</tspan> · <tspan class="mono">platform-kafka</tspan> · <tspan class="mono">platform-db</tspan> · <tspan class="mono">platform-gateway</tspan> · <tspan class="mono">observability</tspan></text>
 
   <!-- ===== right column ===== -->

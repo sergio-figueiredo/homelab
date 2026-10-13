@@ -64,14 +64,14 @@
   <rect class="chip" x="438" y="190" width="100" height="40"/>
   <text class="l" x="450" y="207">8 vCPU</text><text class="xs" x="450" y="223">CCD 1</text>
   <rect class="chip" x="546" y="190" width="100" height="40"/>
-  <text class="l" x="558" y="207">16 GB</text><text class="xs" x="558" y="223">balloon 8–16</text>
+  <text class="l" x="558" y="207">24 GB</text><text class="xs" x="558" y="223">balloon 16–24</text>
   <rect class="chip" x="654" y="190" width="108" height="40"/>
   <text class="l" x="666" y="207">150 GB</text><text class="xs" x="666" y="223">zvol rpool</text>
   <text class="s" x="438" y="256">Alvo do JetBrains Gateway. Toolchain em</text>
   <text class="s" x="438" y="274">distrobox: JDK 21, GraalVM, Quarkus CLI,</text>
   <text class="s" x="438" y="292">Maven, Podman, oc, tofu, ansible.</text>
-  <text class="mono" x="438" y="318">builds nativos GraalVM correm aqui,</text>
-  <text class="mono" x="438" y="336">não no MacBook</text>
+  <text class="mono" x="438" y="318">builds nativos e o compose de dev</text>
+  <text class="mono" x="438" y="336">correm aqui, não no MacBook</text>
   <text class="xs" x="438" y="356" fill="var(--git)" font-weight="700">SOB PROCURA</text>
 
   <!-- bazzite -->
@@ -97,19 +97,19 @@
   <!-- platform -->
   <rect class="card" x="40" y="386" width="360" height="216"/>
   <rect x="40" y="386" width="360" height="34" rx="12" fill="var(--data)" opacity="0.15"/>
-  <text class="h" x="58" y="410" fill="var(--data)">platform · 3 × LXC</text>
+  <text class="h" x="58" y="410" fill="var(--data)">registry · LXC</text>
   <text class="xs" x="330" y="408" fill="var(--data)" font-weight="700">VLAN 20</text>
-  <text class="s" x="58" y="444">Serviços com estado, fora do cluster — do</text>
-  <text class="s" x="58" y="462">mesmo modo que em produção não se corre</text>
-  <text class="s" x="58" y="480">a base de dados no mesmo sítio que a app.</text>
+  <text class="s" x="58" y="444">Imagens OCI para o cluster e para o CI.</text>
+  <text class="s" x="58" y="462">Kafka e PostgreSQL de desenvolvimento</text>
+  <text class="s" x="58" y="480">vivem no compose da devbox (ADR 0011).</text>
   <rect class="chip" x="58" y="494" width="104" height="38"/>
-  <text class="l" x="70" y="510">kafka</text><text class="xs" x="70" y="526">KRaft · 4 GB</text>
+  <text class="l" x="70" y="510">2 vCPU</text><text class="xs" x="70" y="526">CCD 1</text>
   <rect class="chip" x="170" y="494" width="104" height="38"/>
-  <text class="l" x="182" y="510">postgres</text><text class="xs" x="182" y="526">16 · 4 GB</text>
+  <text class="l" x="182" y="510">2 GB</text><text class="xs" x="182" y="526">fixo</text>
   <rect class="chip" x="282" y="494" width="104" height="38"/>
-  <text class="l" x="294" y="510">registry</text><text class="xs" x="294" y="526">OCI · 2 GB</text>
-  <text class="mono" x="58" y="556">contentores não-privilegiados, 12 GB no total</text>
-  <text class="xs" x="58" y="586" fill="var(--data)" font-weight="700">SOB PROCURA — sobe com o perfil platform</text>
+  <text class="l" x="294" y="510">60 GB</text><text class="xs" x="294" y="526">rootfs rpool</text>
+  <text class="mono" x="58" y="556">contentor não-privilegiado, Podman dentro</text>
+  <text class="xs" x="58" y="586" fill="var(--data)" font-weight="700">SOB PROCURA — sobe com dev e platform</text>
 
   <!-- haos -->
   <rect class="card" x="420" y="386" width="360" height="216"/>

@@ -36,8 +36,6 @@ locals {
     ocp_sno  = { addr = "10.10.20.20/24", gw = "10.10.20.1" }
     devbox   = { addr = "10.10.50.50/24", gw = "10.10.50.1" }
     bazzite  = { addr = "10.10.40.40/24", gw = "10.10.40.1" }
-    kafka    = { addr = "10.10.20.21/24", gw = "10.10.20.1" }
-    postgres = { addr = "10.10.20.22/24", gw = "10.10.20.1" }
     registry = { addr = "10.10.20.23/24", gw = "10.10.20.1" }
     } : {
     opnsense = { addr = "dhcp", gw = null }
@@ -45,8 +43,6 @@ locals {
     ocp_sno  = { addr = "dhcp", gw = null }
     devbox   = { addr = "dhcp", gw = null }
     bazzite  = { addr = "dhcp", gw = null }
-    kafka    = { addr = "dhcp", gw = null }
-    postgres = { addr = "dhcp", gw = null }
     registry = { addr = "dhcp", gw = null }
   }
 

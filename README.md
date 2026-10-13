@@ -93,7 +93,7 @@ se o lab arder, a família continua online.
 |---:|---|---|---|
 | — | untagged | `192.168.1.0/24` | LAN de casa; perna WAN do OPNsense |
 | 10 | `MGMT` | `10.10.10.0/24` | Proxmox, gestão do switch, Proxmox Backup Server |
-| 20 | `PLATFORM` | `10.10.20.0/24` | OpenShift, Kafka, PostgreSQL, registry, monitorização |
+| 20 | `PLATFORM` | `10.10.20.0/24` | OpenShift, registry, monitorização |
 | 30 | `IOT` | `10.10.30.0/24` | Home Assistant, o painel de parede e todo o firmware de terceiros |
 | 40 | `GAMING` | `10.10.40.0/24` | Bazzite |
 | 50 | `DEV` | `10.10.50.0/24` | Bancada de desenvolvimento |
@@ -115,12 +115,14 @@ Detalhe, incluindo o plano de endereçamento e as regras inter-VLAN: **[docs/net
 | Guest | Sistema | vCPU | RAM | Disco | VLAN | Ligado |
 |---|---|---:|---:|---:|---:|---|
 | `ocp-sno` | OpenShift 4.x Single-Node (RHCOS) | 12 · CCD 1 | 24 GB | 200 GB | 20 | sob procura |
-| `devbox` | Fedora Silverblue (bootc) | 8 · CCD 1 | 16 GB | 150 GB | 50 | sob procura |
+| `devbox` | Fedora Silverblue (bootc) + compose de desenvolvimento | 8 · CCD 1 | 24 GB | 150 GB | 50 | sob procura |
 | `bazzite` | Bazzite (Fedora Atomic) | 8 · CCD 0 fixo | 16 GB | 250 GB | 40 | sob procura |
-| `platform` | 3 × LXC: Kafka, PostgreSQL, registry | 6 partilhados | 12 GB | 100 GB | 20 | sob procura |
+| `registry` | LXC: registry OCI | 2 | 2 GB | 60 GB | 20 | sob procura |
 | `haos` | Home Assistant OS | 2 | 4 GB | 32 GB | 30 | sempre |
 | `monitoring` | LXC: Prometheus e Grafana | 2 | 1 GB | 30 GB | 20 | sempre |
 | `opnsense-lab` | OPNsense | 2 | 2 GB | 20 GB | trunk | sempre |
+| `pbs` | LXC: Proxmox Backup Server | — | 2 GB | — | 10 | sempre |
+| `runner` | LXC: runner de deploy, efémero | 2 | 2 GB | — | 20 | sob procura |
 
 Duas decisões que valem a pena explicar:
 
@@ -145,16 +147,17 @@ arranque, e cada perfil é um alvo do `Makefile`.
 </p>
 
 ```bash
-make profile-idle       # 13 GB — só OPNsense, Home Assistant e monitorização
-make profile-gaming     # 29 GB — a consola da sala
-make profile-dev        # 41 GB — devbox + Kafka + PostgreSQL
-make profile-platform   # 49 GB — OpenShift + serviços de dados
+make profile-idle       # 15 GB — OPNsense, Home Assistant, monitorização e backup
+make profile-gaming     # 31 GB — a consola da sala
+make profile-dev        # 41 GB — devbox com o compose de desenvolvimento + registry
+make profile-platform   # 41 GB — OpenShift + registry
 make profile-full-lab   # 65 GB — tudo menos o gaming, e só com os ajustes de docs/capacity.md
 ```
 
-`gaming` e `platform` nunca coexistem: pedem 81 GB. É a limitação mais real do lab e está desenhada
-em vez de escondida. O caminho de saída — 2 × 48 GB — está em
-**[docs/capacity.md](docs/capacity.md)**, com o custo em frequência que isso implica.
+`gaming` e `platform` juntos pedem 57 GB: desde que o compose de desenvolvimento passou para a
+`devbox` ([ADR 0011](docs/adr/0011-devbox-como-maquina-do-compose.md)), cabem — falta validar no
+metal antes de virar perfil. O `full-lab` continua encostado ao tecto; o caminho de saída — 2 × 48 GB
+— está em **[docs/capacity.md](docs/capacity.md)**, com o custo em frequência que isso implica.
 
 ---
 
@@ -227,7 +230,7 @@ homelab/
 ├── docs/
 │   ├── adr/               # decisões de arquitectura, com o contexto
 │   ├── runbooks/          # procedimentos operacionais
-│   └── diagrams/          # os SVG deste README
+│   └── diagrams/          # os SVG deste README e os diagramas interactivos
 └── .github/workflows/     # validação em PR
 ```
 
