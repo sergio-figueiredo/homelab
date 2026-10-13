@@ -40,7 +40,7 @@ Supernet do laboratório: `10.10.0.0/16`. Uma `/24` por VLAN, com espaço de sob
 | `registry` | `10.10.20.23` | 20 |
 | `monitoring` — Prometheus e Grafana | `10.10.20.24` | 20 |
 | `haos` | `10.10.30.30` | 30 |
-| Tablet da parede (reserva DHCP) | `10.10.30.31` | 30 |
+| Painel de parede (reserva DHCP) | `10.10.30.31` | 30 |
 | `bazzite` | `10.10.40.40` | 40 |
 | `devbox` | `10.10.50.50` | 50 |
 
@@ -101,10 +101,10 @@ Matriz de fluxo — a origem está nas linhas, o destino nas colunas:
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **MGMT** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **PLATFORM** | ⚠️ só o `monitoring`, aos exporters do host | ✅ | ❌ | ⚠️ só o `monitoring`, ao `:9100` da `bazzite` | ❌ | ✅ |
-| **IOT** | ❌ | ⚠️ só o tablet ao Grafana e o `haos` ao Prometheus | ✅ | ❌ | ❌ | ⚠️ limitada |
+| **IOT** | ❌ | ⚠️ só o painel ao Grafana e o `haos` ao Prometheus | ✅ | ❌ | ❌ | ⚠️ limitada |
 | **GAMING** | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
 | **DEV** | ⚠️ só SSH e a UI do Proxmox | ✅ | ❌ | ❌ | ✅ | ✅ |
-| **LAN de casa** | ⚠️ só a UI do Proxmox | ⚠️ só os *routes* do OpenShift | ⚠️ só o HA e a HomeKit Bridge | ⚠️ Sunshine | ⚠️ SSH | — |
+| **LAN de casa** | ⚠️ só a UI do Proxmox | ⚠️ só os *routes* do OpenShift | ⚠️ só o HA e a ponte de integração | ⚠️ Sunshine | ⚠️ SSH | — |
 
 Ler assim: a `DEV` é a única VLAN de onde se trabalha, e é por isso a única com rota aberta para a
 `PLATFORM`. A `IOT` não fala com nada que não esteja nomeado — se uma lâmpada for comprometida, chega
@@ -117,18 +117,18 @@ As excepções ⚠️ ligadas à monitorização e à casa, porta a porta:
 | `monitoring` `10.10.20.24` | `forge` `10.10.10.10` | 9100/tcp | `node_exporter` do host: temperatura e uso por CCD |
 | `monitoring` `10.10.20.24` | `forge` `10.10.10.10` | 8006/tcp | `pve-exporter` contra a API do Proxmox, com token só de leitura |
 | `monitoring` `10.10.20.24` | `bazzite` `10.10.40.40` | 9100/tcp | `node_exporter` com o coletor `amdgpu` — a GPU só se lê de dentro |
-| Tablet `10.10.30.31` | `monitoring` `10.10.20.24` | 3000/tcp | Grafana embutido no dashboard do HA |
+| Painel `10.10.30.31` | `monitoring` `10.10.20.24` | 3000/tcp | Grafana embutido no dashboard do HA |
 | `haos` `10.10.30.30` | `monitoring` `10.10.20.24` | 9090/tcp | Gráficos nativos do HA a ler do Prometheus |
-| LAN de casa | `haos` `10.10.30.30` | 8123/tcp | App do Home Assistant no iPhone e no Mac, dentro de casa |
-| LAN de casa | `haos` `10.10.30.30` | 21064/tcp | HomeKit Bridge — o HomePod e o app Casa |
+| LAN de casa | `haos` `10.10.30.30` | 8123/tcp | App do Home Assistant, dentro de casa |
+| LAN de casa | `haos` `10.10.30.30` | 21064/tcp | Ponte de integração do HA com o hub Matter/Thread da casa |
 
 Decisões: [ADR 0009](adr/0009-casa-inteligente-home-assistant.md) e
 [ADR 0010](adr/0010-monitorizacao-fora-do-openshift.md).
 
 ## Casa inteligente
 
-O HomePod e os iPhones vivem na LAN de casa; o `haos` e o tablet vivem na `IOT`. Para a HomeKit
-Bridge e a descoberta das apps funcionarem entre os dois, o OPNsense corre um **repetidor mDNS**
+O hub Matter/Thread e os clientes da casa vivem na LAN de casa; o `haos` e o painel vivem na `IOT`.
+Para a ponte de integração e a descoberta das apps funcionarem entre os dois, o OPNsense corre um **repetidor mDNS**
 (plugin `os-mdns-repeater`) entre a LAN de casa e a VLAN 30 — e só entre essas duas. O mDNS não é
 repetido para nenhuma outra VLAN.
 
@@ -168,8 +168,8 @@ O Tailscale usa o protocolo WireGuard por baixo; o que acrescenta é a gestão d
 de NAT — que é o que dispensa abrir uma porta no router de casa, coisa que um WireGuard simples no
 OPNsense obrigaria.
 
-O iPhone entra na tailnet e a app do Home Assistant abre o mesmo dashboard que o tablet, Grafana
-embutido incluído, porque o túnel chega à `PLATFORM`. As ACL da tailnet espelham a matriz: o iPhone
+Um cliente na tailnet abre o mesmo dashboard do Home Assistant que o painel de parede, Grafana
+embutido incluído, porque o túnel chega à `PLATFORM`. As ACL da tailnet espelham a matriz: o cliente
 chega ao `haos:8123` e ao `monitoring:3000`, não à `MGMT`. O Nabu Casa fica de fora — só exporia o
 HA, e o iframe do Grafana não abriria de fora.
 

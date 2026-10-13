@@ -18,5 +18,5 @@ NNNN` e escreve-se um novo. Não se reescreve o passado.
 | [0006](0006-armazenamento-zfs-disco-unico.md) | ZFS num disco único, com backup a compensar | Aceite |
 | [0007](0007-segredos-sops-age.md) | Segredos cifrados com SOPS + age, em repositório público | Aceite |
 | [0008](0008-perfis-de-memoria.md) | Perfis de arranque em vez de tudo sempre ligado | Aceite |
-| [0009](0009-casa-inteligente-home-assistant.md) | Home Assistant como cérebro da casa, ecossistema Apple como janela | Aceite |
+| [0009](0009-casa-inteligente-home-assistant.md) | Home Assistant como cérebro da casa | Aceite |
 | [0010](0010-monitorizacao-fora-do-openshift.md) | Monitorização da máquina num LXC sempre ligado, fora do OpenShift | Aceite |

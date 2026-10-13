@@ -98,7 +98,7 @@ the lab burns down, the family stays online.
 | — | untagged | `192.168.1.0/24` | House LAN; OPNsense WAN leg |
 | 10 | `MGMT` | `10.10.10.0/24` | Proxmox, switch management, Proxmox Backup Server |
 | 20 | `PLATFORM` | `10.10.20.0/24` | OpenShift, Kafka, PostgreSQL, registry, monitoring |
-| 30 | `IOT` | `10.10.30.0/24` | Home Assistant, the wall tablet and every piece of third-party firmware |
+| 30 | `IOT` | `10.10.30.0/24` | Home Assistant, the wall panel and every piece of third-party firmware |
 | 40 | `GAMING` | `10.10.40.0/24` | Bazzite |
 | 50 | `DEV` | `10.10.50.0/24` | Development bench |
 

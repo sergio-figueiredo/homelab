@@ -56,12 +56,11 @@ Projecto pessoal, sem prazos. A ordem é por dependência, não por data.
 Independente das fases 3 a 7; só precisa do `haos` e do `monitoring` da fase 2.
 Decisão em [ADR 0009](adr/0009-casa-inteligente-home-assistant.md).
 
-- [ ] HomeKit Bridge no HA, com o HomePod como hub Matter/Thread
-- [ ] Tablet na parede em modo kiosk (Fully Kiosk Browser), utilizador restrito no HA, "Proteger
-      bateria" activo
-- [ ] Dashboard com abas Câmaras, Máquina e Casa; vista separada para o iPhone
+- [ ] Ponte de integração do HA com o hub Matter/Thread da casa
+- [ ] Painel de parede em modo kiosk, utilizador restrito no HA
+- [ ] Dashboard com abas Câmaras, Máquina e Casa; vista separada para telemóvel
 - [ ] Câmaras e campainha com stream local (RTSP/ONVIF), Advanced Camera Card com `go2rtc`
-- [ ] Popup da campainha no tablet (`browser_mod`) e notificação *push* com imagem no iPhone
+- [ ] Popup da campainha no painel (`browser_mod`) e notificação *push* com imagem no telemóvel
 - [ ] Grafana embutido no HA, com `allow_embedding` e utilizador *viewer*
 
 ## Fase 5 — Plataforma
@@ -118,6 +117,5 @@ Ficam de fora por escolha, não por esquecimento:
   plataforma e operação.
 - **Kubernetes vanilla a par do OpenShift.** O objectivo é aprofundar o OpenShift, não comparar
   distribuições.
-- **Apple Home Collection, por agora.** Não está disponível na UE. Revê-se se chegar — ver
-  [ADR 0009](adr/0009-casa-inteligente-home-assistant.md).
-- **Alexa, Google Home, Ring, Nest.** A casa não depende de clouds de terceiros.
+- **Dispositivos que só funcionam pela cloud do fabricante.** A casa não depende de clouds de
+  terceiros — ver [ADR 0009](adr/0009-casa-inteligente-home-assistant.md).

@@ -19,7 +19,7 @@ O que se quer ver, sempre:
   não a consegue ler.
 - **OpenShift:** as métricas do cluster quando está ligado, no mesmo sítio que as outras.
 
-E mostrá-lo no tablet da parede e no iPhone ([0009](0009-casa-inteligente-home-assistant.md)).
+E mostrá-lo no painel de parede e no telemóvel ([0009](0009-casa-inteligente-home-assistant.md)).
 
 ## Opções consideradas
 
@@ -45,10 +45,10 @@ Fontes:
 | OpenShift | federação ou *remote write* do Prometheus do cluster | no cluster, quando ligado |
 
 O Grafana é mostrado no HA por um cartão *iframe* (`allow_embedding` e um utilizador *viewer*
-anónimo ou *auth proxy*). Alternativa mais leve, se o iframe pesar no tablet: gráficos nativos com o
+anónimo ou *auth proxy*). Alternativa mais leve, se o iframe pesar no painel: gráficos nativos com o
 ApexCharts card a ler do Prometheus.
 
-**Porquê a VLAN 20 e não a 10.** Na `MGMT`, o Prometheus raspava tudo sem regras novas, mas o tablet
+**Porquê a VLAN 20 e não a 10.** Na `MGMT`, o Prometheus raspava tudo sem regras novas, mas o painel
 (VLAN 30) teria de chegar ao Grafana — e a `MGMT` nunca é alcançável a partir da `IOT`. Na `PLATFORM`
 custam duas regras estreitas de saída, só a partir deste LXC: para os exporters do host e para o
 `node_exporter` da `bazzite`. É preferível abrir caminho de saída a partir de um serviço do que abrir
@@ -60,7 +60,7 @@ a gestão a um segmento não-confiável.
 
 - A máquina vê-se a qualquer hora, incluindo durante os jogos e com o cluster desligado.
 - O Prometheus do OpenShift continua a ser o do cluster; este não o substitui, recebe dele.
-- Um painel no tablet e no iPhone, sem expor nada à Internet.
+- Os gráficos chegam ao painel de parede e ao telemóvel sem expor nada à Internet.
 
 **Negativas**
 
