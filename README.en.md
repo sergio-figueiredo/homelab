@@ -125,6 +125,8 @@ Detail, including the addressing plan and the inter-VLAN rules: **[docs/network.
 | `haos` | Home Assistant OS | 2 | 4 GB | 32 GB | 30 | always |
 | `monitoring` | LXC: Prometheus and Grafana | 2 | 1 GB | 30 GB | 20 | always |
 | `opnsense-lab` | OPNsense | 2 | 2 GB | 20 GB | trunk | always |
+| `pbs` | LXC: Proxmox Backup Server | — | 2 GB | — | 10 | always |
+| `runner` | LXC: ephemeral deploy runner | 2 | 2 GB | — | 20 | on demand |
 
 Two decisions worth explaining:
 
@@ -149,14 +151,14 @@ boot profiles, and each profile is a `Makefile` target.
 </p>
 
 ```bash
-make profile-idle       # 13 GB — OPNsense, Home Assistant and monitoring only
-make profile-gaming     # 29 GB — the living room console
-make profile-dev        # 39 GB — devbox with the development compose + registry
-make profile-platform   # 39 GB — OpenShift + registry
-make profile-full-lab   # 63 GB — everything but gaming, and only with the tuning in docs/capacity.md
+make profile-idle       # 15 GB — OPNsense, Home Assistant, monitoring and backup
+make profile-gaming     # 31 GB — the living room console
+make profile-dev        # 41 GB — devbox with the development compose + registry
+make profile-platform   # 41 GB — OpenShift + registry
+make profile-full-lab   # 65 GB — everything but gaming, and only with the tuning in docs/capacity.md
 ```
 
-`gaming` and `platform` together ask for 55 GB: since the development compose moved into `devbox`
+`gaming` and `platform` together ask for 57 GB: since the development compose moved into `devbox`
 ([ADR 0011](docs/adr/0011-devbox-como-maquina-do-compose.md)), they fit — still to be validated on
 the metal before becoming a profile. `full-lab` still sits against the ceiling; the way out —
 2 × 48 GB — is in **[docs/capacity.md](docs/capacity.md)**, along with the memory-speed cost it implies.

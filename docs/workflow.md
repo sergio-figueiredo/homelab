@@ -116,7 +116,7 @@ histórico. Assumir que já foi visto é a única postura segura.
 | Quando | O quê |
 |---|---|
 | Ao começar | `make profile-status`, depois o perfil que fizer falta |
-| Ao acabar | `make profile-idle` — a máquina volta aos 13 GB |
+| Ao acabar | `make profile-idle` — a máquina volta aos 15 GB |
 | Semanal | `make backup-verify` — um backup por testar não é um backup |
 | Mensal | `make update` — Proxmox, imagens `bootc`, operadores; sempre por PR |
 | Quando algo parte | [`runbooks/`](runbooks/) primeiro; se não houver runbook, escreve-se um a seguir |
