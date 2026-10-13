@@ -7,9 +7,10 @@
 #  ONDE APRENDER  docs/percurso.md — etapa 9, e a nota honesta sobre o Fedora Silverblue
 # ──────────────────────────────────────────────────────────────────────────────
 #
-#  `memory_floating_mb = 8192` liga o ballooning entre 8 e 16 GB: uma IDE remota
-#  parada não precisa de 16 GB, um build native-image precisa. É o único guest
-#  do lab onde o ballooning faz sentido.
+#  `memory_floating_mb = 16384` liga o ballooning entre 16 e 24 GB: a devbox
+#  corre a IDE remota e o compose de desenvolvimento (~13,5 GB de limites),
+#  e um build native-image pede o resto. É o único guest do lab onde o
+#  ballooning faz sentido. Ver docs/adr/0011-devbox-como-maquina-do-compose.md.
 #
 #  `clone_vm_id` faz nascer esta VM de um template Packer em vez de uma ISO.
 
@@ -24,11 +25,11 @@ module "devbox" {
 
   cores        = 8
   cpu_affinity = var.cpu_ccd1_cpus
-  memory_mb    = 16384
+  memory_mb    = 24576
 
-  # balloon 8-16: uma IDE remota parada nao precisa de 16 GB, mas um
-  # native-image precisa. Ver docs/capacity.md
-  memory_floating_mb = 8192
+  # balloon 16-24: o compose fica sempre em cima; o native-image leva o
+  # resto quando compila. Ver docs/capacity.md
+  memory_floating_mb = 16384
 
   disk_size_gb = 150
   datastore_id = var.datastore_id

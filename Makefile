@@ -117,23 +117,23 @@ profile-status: ## Mostra que guests estao ligados e quanta RAM esta comprometid
 	@$(PROFILE_SH) status
 
 .PHONY: profile-idle
-profile-idle: ## 12 GB — so opnsense e haos (estado por omissao)
+profile-idle: ## 13 GB — opnsense, haos e monitorizacao (estado por omissao)
 	@$(PROFILE_SH) apply idle
 
 .PHONY: profile-gaming
-profile-gaming: ## 28 GB — a consola da sala
+profile-gaming: ## 29 GB — a consola da sala
 	@$(PROFILE_SH) apply gaming
 
 .PHONY: profile-dev
-profile-dev: ## 40 GB — devbox + Kafka + PostgreSQL
+profile-dev: ## 39 GB — devbox com o compose de desenvolvimento + registry
 	@$(PROFILE_SH) apply dev
 
 .PHONY: profile-platform
-profile-platform: ## 48 GB — OpenShift + servicos de dados
+profile-platform: ## 39 GB — OpenShift + registry
 	@$(PROFILE_SH) apply platform
 
 .PHONY: profile-full-lab
-profile-full-lab: ## 64 GB — tudo menos o gaming (ver docs/capacity.md)
+profile-full-lab: ## 63 GB — tudo menos o gaming (ver docs/capacity.md)
 	@$(PROFILE_SH) apply full-lab
 
 ##@ OpenShift
