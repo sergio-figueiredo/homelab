@@ -94,7 +94,7 @@ se o lab arder, a família continua online.
 | — | untagged | `192.168.1.0/24` | LAN de casa; perna WAN do OPNsense |
 | 10 | `MGMT` | `10.10.10.0/24` | Proxmox, gestão do switch, Proxmox Backup Server |
 | 20 | `PLATFORM` | `10.10.20.0/24` | OpenShift, Kafka, PostgreSQL, registry, monitorização |
-| 30 | `IOT` | `10.10.30.0/24` | Home Assistant, o tablet da parede e todo o firmware de terceiros |
+| 30 | `IOT` | `10.10.30.0/24` | Home Assistant, o painel de parede e todo o firmware de terceiros |
 | 40 | `GAMING` | `10.10.40.0/24` | Bazzite |
 | 50 | `DEV` | `10.10.50.0/24` | Bancada de desenvolvimento |
 
