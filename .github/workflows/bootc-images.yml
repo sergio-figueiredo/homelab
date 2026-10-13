@@ -4,10 +4,17 @@ name: bootc
 # Constroi as imagens das VMs atomicas e publica-as em ghcr.io.
 # As VMs adoptam-nas com 'bootc switch' e recebem actualizacoes automaticas.
 # Ver bootc/README.md
+#
+# Num PR so constroi, nao publica: serve para um Containerfile partido falhar
+# antes do merge e nao depois. E so constroi a imagem cujo directorio mudou.
 
 on:
   push:
     branches: [main]
+    paths:
+      - "bootc/**"
+      - ".github/workflows/bootc-images.yml"
+  pull_request:
     paths:
       - "bootc/**"
       - ".github/workflows/bootc-images.yml"
@@ -42,8 +49,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # o filtro abaixo compara com a base do PR
+
+      - name: esta imagem mudou?
+        # Fora de um PR constroi sempre. Num PR, so se o directorio da imagem
+        # ou este workflow mudaram — um PR que so toca na devbox nao espera
+        # pela bazzite.
+        id: filtro
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "construir=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
+               | grep -qE '^(${{ matrix.image.context }}/|\.github/workflows/bootc-images\.yml$)'; then
+            echo "construir=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "construir=false" >> "$GITHUB_OUTPUT"
+            echo "sem alteracoes em ${{ matrix.image.context }} — nada a construir"
+          fi
 
       - name: libertar espaco
+        if: steps.filtro.outputs.construir == 'true'
         # O runner alojado traz 145 GB de raiz, dos quais ~114 GB ficam livres
         # depois desta limpeza — folga de sobra para a imagem base do Bazzite.
         # Fica na mesma porque custa cerca de um minuto e o "no space left on
@@ -64,6 +91,7 @@ jobs:
           df -h /
 
       - name: construir
+        if: steps.filtro.outputs.construir == 'true'
         id: build
         uses: redhat-actions/buildah-build@v3
         with:
@@ -74,6 +102,8 @@ jobs:
           oci: true
 
       - name: publicar
+        # So na main e no agendamento semanal. Um PR nunca publica.
+        if: steps.filtro.outputs.construir == 'true' && github.event_name != 'pull_request'
         uses: redhat-actions/push-to-registry@v3
         with:
           image: ${{ steps.build.outputs.image }}
