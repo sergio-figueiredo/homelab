@@ -234,7 +234,7 @@ homelab/
 ├── docs/
 │   ├── adr/               # architecture decisions, with the context
 │   ├── runbooks/          # operational procedures
-│   └── diagrams/          # the SVGs on this page
+│   └── diagrams/          # the SVGs on this page and the interactive diagrams
 └── .github/workflows/     # PR validation
 ```
 
