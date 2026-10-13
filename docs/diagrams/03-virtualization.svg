@@ -31,7 +31,7 @@
   </defs>
 
   <text class="t" x="40" y="46">Camada de virtualização — quem recebe o quê</text>
-  <text class="st" x="40" y="70">Seis guests declarados em OpenTofu. Nenhum é criado pela interface web: a UI serve para observar, não para provisionar.</text>
+  <text class="st" x="40" y="70">Seis guests declarados em OpenTofu — monitoring, pbs e runner entram a seguir. A UI web serve para observar, não para provisionar.</text>
 
   <!-- ================= ROW 1 ================= -->
   <!-- ocp-sno -->
@@ -100,8 +100,8 @@
   <text class="h" x="58" y="410" fill="var(--data)">registry · LXC</text>
   <text class="xs" x="330" y="408" fill="var(--data)" font-weight="700">VLAN 20</text>
   <text class="s" x="58" y="444">Imagens OCI para o cluster e para o CI.</text>
-  <text class="s" x="58" y="462">Kafka e PostgreSQL de desenvolvimento</text>
-  <text class="s" x="58" y="480">vivem no compose da devbox (ADR 0011).</text>
+  <text class="s" x="58" y="462">Guarda o que se constrói fora do</text>
+  <text class="s" x="58" y="480">cluster. Ao contrário do compose, dura.</text>
   <rect class="chip" x="58" y="494" width="104" height="38"/>
   <text class="l" x="70" y="510">2 vCPU</text><text class="xs" x="70" y="526">CCD 1</text>
   <rect class="chip" x="170" y="494" width="104" height="38"/>

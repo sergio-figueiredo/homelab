@@ -37,7 +37,7 @@
   <text class="sec" x="40" y="118" fill="var(--infra)">1 · Ciclo de infraestrutura — o que cria as máquinas</text>
 
   <rect class="card" x="280" y="134" width="700" height="62" stroke-dasharray="5 4"/>
-  <text class="h" x="298" y="158">GitHub Actions · portão de PR (não faz deploy)</text>
+  <text class="h" x="298" y="158">GitHub Actions · portão de PR (valida e constrói imagens, não faz deploy)</text>
   <text class="mono" x="298" y="180">tofu fmt · tofu validate · tflint · trivy config · ansible-lint · yamllint · gitleaks</text>
 
   <rect class="card" x="40" y="224" width="200" height="128"/>
@@ -88,8 +88,8 @@
   <text class="h" x="58" y="462">MacBook → devbox</text>
   <text class="s" x="58" y="484">JetBrains Gateway abre a</text>
   <text class="s" x="58" y="502">IDE contra a VM devbox.</text>
-  <text class="s" x="58" y="520">O código é compilado do</text>
-  <text class="s" x="58" y="538">lado do lab, não do Mac.</text>
+  <text class="s" x="58" y="520">Compila e corre o compose</text>
+  <text class="s" x="58" y="538">de dev do lado do lab.</text>
   <text class="xs" x="58" y="556">o Mac é ecrã e teclado</text>
 
   <rect class="card" x="280" y="436" width="200" height="128"/>
