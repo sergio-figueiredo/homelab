@@ -230,7 +230,7 @@ homelab/
 ├── docs/
 │   ├── adr/               # decisões de arquitectura, com o contexto
 │   ├── runbooks/          # procedimentos operacionais
-│   └── diagrams/          # os SVG deste README
+│   └── diagrams/          # os SVG deste README e os diagramas interactivos
 └── .github/workflows/     # validação em PR
 ```
 
