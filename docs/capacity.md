@@ -1,6 +1,6 @@
 # Capacidade
 
-64 GB de RAM, dois slots ocupados, e a soma de tudo o que o lab quer correr dá 80 GB. Este documento
+64 GB de RAM, dois slots ocupados, e a soma de tudo o que o lab quer correr dá 81 GB. Este documento
 existe porque essa conta não fecha — e a resposta não é comprar já, é desenhar em torno do limite.
 
 Ver o desenho: **[diagrams/04-capacity.svg](diagrams/04-capacity.svg)**.
@@ -12,11 +12,12 @@ Ver o desenho: **[diagrams/04-capacity.svg](diagrams/04-capacity.svg)**.
 | Host Proxmox + ARC do ZFS | 6 GB | 2 GB de sistema, 4–8 GB de ARC conforme o perfil |
 | `opnsense-lab` | 2 GB | fixo, sempre ligado |
 | `haos` | 4 GB | fixo, sempre ligado |
+| `monitoring` (LXC) | 1 GB | Prometheus e Grafana, sempre ligado — [ADR 0010](adr/0010-monitorizacao-fora-do-openshift.md) |
 | `ocp-sno` | 24 GB | sem balloon; o OpenShift lida mal com memória a desaparecer |
 | `platform` (3 × LXC) | 12 GB | Kafka 4, PostgreSQL 4, registry 2, folga 2 |
 | `devbox` | 16 GB | balloon 8–16 |
 | `bazzite` | 16 GB | hugepages, sem balloon |
-| **Total se tudo ligasse** | **80 GB** | **16 GB acima do físico** |
+| **Total se tudo ligasse** | **81 GB** | **17 GB acima do físico** |
 
 ## Perfis
 
@@ -25,11 +26,11 @@ Cada perfil é um alvo do `Makefile` que arranca e pára conjuntos de guests. N�
 
 | Perfil | RAM | Contém | Para quê |
 |---|---:|---|---|
-| `idle` | 12 GB | host, `opnsense-lab`, `haos` | O estado por omissão. A casa funciona, o lab dorme |
-| `gaming` | 28 GB | `idle` + `bazzite` | Consola da sala |
-| `dev` | 40 GB | `idle` + `devbox` + `platform` | O perfil de todos os dias: código, Kafka, PostgreSQL |
-| `platform` | 48 GB | `idle` + `ocp-sno` + `platform` | Exercícios de OpenShift e GitOps |
-| `full-lab` | 64 GB | `idle` + `ocp-sno` + `platform` + `devbox` | Ciclo completo, só com os ajustes abaixo |
+| `idle` | 13 GB | host, `opnsense-lab`, `haos`, `monitoring` | O estado por omissão. A casa funciona, a máquina é observada, o lab dorme |
+| `gaming` | 29 GB | `idle` + `bazzite` | Consola da sala |
+| `dev` | 41 GB | `idle` + `devbox` + `platform` | O perfil de todos os dias: código, Kafka, PostgreSQL |
+| `platform` | 49 GB | `idle` + `ocp-sno` + `platform` | Exercícios de OpenShift e GitOps |
+| `full-lab` | 65 GB | `idle` + `ocp-sno` + `platform` + `devbox` | Ciclo completo, só com os ajustes abaixo |
 
 ```bash
 make profile-dev        # pára o que sobra, arranca o que falta
@@ -40,10 +41,11 @@ Os perfis são idempotentes: correr `make profile-dev` duas vezes não faz nada 
 
 ## O caso `full-lab`
 
-Somado à letra, o `full-lab` dá exactamente 64 GB — ou seja, zero folga. Encostar ao tecto físico
-é pedir que o `oom-killer` escolha por nós, e ele escolhe sempre mal.
+Somado à letra, o `full-lab` dá 65 GB — 1 GB acima do tecto físico. Era 64 GB exactos até o LXC
+`monitoring` entrar no `idle`; nunca teve folga, e agora nem cabe. Encostar ao tecto é pedir que o
+`oom-killer` escolha por nós, e ele escolhe sempre mal.
 
-Três ajustes, por esta ordem, põem o perfil em ~58 GB com 6 GB de margem:
+Três ajustes, por esta ordem, põem o perfil em ~59 GB com 5 GB de margem:
 
 1. **Baixar a ARC do ZFS de 8 para 4 GB.** É o ganho maior e o mais barato. Custo: menos cache de
    leitura, sensível no arranque de VMs, irrelevante depois.
@@ -61,7 +63,7 @@ que reporta saudável enquanto entrega latências absurdas — pior do que falha
 
 ## O caso que não existe
 
-`gaming` + `platform` = 80 GB. Não há ajuste que resolva 16 GB em falta. A `bazzite` tem a GPU, e a
+`gaming` + `platform` = 81 GB. Não há ajuste que resolva 17 GB em falta. A `bazzite` tem a GPU, e a
 GPU não se partilha; se o OpenShift está ligado, a consola da sala está desligada. É a limitação mais
 concreta deste lab e está desenhada no diagrama em vez de escondida numa nota de rodapé.
 
@@ -78,7 +80,7 @@ O CPU não é o recurso escasso, mas o *pinning* também não é opcional — ve
 | `bazzite` | 8 | 0 | `cpuset` fixo nos cores com V-Cache, sem partilha |
 | `ocp-sno` | 12 | 1 | `cpuset` no CCD 1, sobrecomprometido com os restantes |
 | `devbox` | 8 | 1 | idem; picos de `native-image` toleram contenção |
-| `platform`, `haos`, `opnsense` | 10 no total | 1 | sem pinning, cargas leves |
+| `platform`, `haos`, `opnsense`, `monitoring` | 12 no total | 1 | sem pinning, cargas leves |
 
 Sobrecomprometer vCPU é normal e desejável. Sobrecomprometer RAM não é — daí um documento inteiro
 sobre memória e três parágrafos sobre CPU.
@@ -93,9 +95,9 @@ sobre memória e três parágrafos sobre CPU.
 | `ocp-sno` | 200 GB |
 | `bazzite` (biblioteca Steam) | 250 GB |
 | `devbox` | 150 GB |
-| `platform`, `haos`, `opnsense` | 150 GB |
+| `platform`, `haos`, `opnsense`, `monitoring` | 180 GB |
 | Snapshots e dumps locais | 200 GB |
-| **Livre** | **~950 GB** |
+| **Livre** | **~920 GB** |
 
 Confortável hoje. A biblioteca de jogos é o que cresce sem aviso — é o primeiro sítio a olhar quando
 a pool passar dos 80 %, porque o ZFS degrada em escrita a partir daí.

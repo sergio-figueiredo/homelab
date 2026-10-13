@@ -2,6 +2,10 @@
 
 **Estado:** Aceite · **Data:** 2026-08-16
 
+> Os números abaixo são os de origem. O [0010](0010-monitorizacao-fora-do-openshift.md) acrescenta
+> ~1 GB ao `idle` e, por arrasto, a todos os perfis. Os valores em vigor estão em
+> [`capacity.md`](../capacity.md).
+
 ## Contexto
 
 A soma da memória pedida por todos os guests é 80 GB. A máquina tem 64 GB, em dois slots, os dois
